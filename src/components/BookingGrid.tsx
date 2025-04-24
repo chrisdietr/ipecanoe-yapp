@@ -6,6 +6,7 @@ import { Text, Card, Grid, Flex } from "@radix-ui/themes";
 import { BookingSlot } from "./BookingSlot";
 import { useBookings } from "@/providers/BookingsProvider";
 import { EARLY_TIME, LATE_TIME } from "@/constants";
+import { format, parse } from "date-fns";
 
 const dates = getTuesdaysAndThursdaysFromNow(new Date(2025, 4, 31));
 
@@ -23,6 +24,11 @@ export const BookingGrid = () => {
     return idx % 2 === 0 ? EARLY_TIME : LATE_TIME;
   };
 
+  const getDateForSlot = (date: string) => {
+    const parsedDate = parse(date, "yyyy-dd-MM", new Date());
+    return format(parsedDate, "d MMMM yyyy");
+  };
+
   return (
     <Grid columns={{ xs: "1", sm: "2", md: "3" }} gap='4'>
       {dates.map((date, idx) => (
@@ -34,7 +40,7 @@ export const BookingGrid = () => {
           <Flex direction='column' gap='2'>
             <Flex align='center' gap='2' className='font-bold text-lg'>
               <CalendarIcon />
-              <Text as='p'>{date}</Text>
+              <Text as='p'>{getDateForSlot(date)}</Text>
             </Flex>
             <Flex gap='8' justify='center'>
               {Array.from({ length: 2 }).map((_, idx) => (

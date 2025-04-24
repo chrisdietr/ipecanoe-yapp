@@ -14,27 +14,13 @@ type BookingSlotProps = {
 };
 
 export const BookingSlot = ({ date, bookings, time }: BookingSlotProps) => {
-  // console.log("🚀 bookings:", bookings);
   const { refreshBookings } = useBookings();
 
-  const handlePaymentSuccess = async (txHash: string) => {
-    console.log("Payment successful:", txHash);
-    // Should, close dialog, show success (maybe toast), trigger refech of bookings in BookingGrid/BookingsProvider
-    // Scratch the above, it should trigger refectch of bookings and make sure the new booking is visible here.
-    // Refresh bookings data to show the new booking
-    console.log("🚀 bookings before:", bookings);
-    await refreshBookings();
-    console.log("🚀 bookings after:", bookings);
-  };
-
   const handleSubmitBooking = async (spotId: number) => {
-    console.log("Booking...");
-
     try {
       // TODO: data validation
 
       const memoId = createMemoId(date, time, spotId);
-      console.log("🚀 memoId chars", memoId.length); // max 32 (bytes = utf-8 chars)
 
       // Create payment request config
       const paymentConfig: PaymentRequestData = {
@@ -61,10 +47,8 @@ export const BookingSlot = ({ date, bookings, time }: BookingSlotProps) => {
       // Request payment
       const { chainId, txHash } = await sdk.requestPayment(paymentConfig);
 
-      console.log("🚀 txHash:", txHash);
-      console.log("🚀 chainId:", chainId);
       // If we're here, payment was successful
-      await handlePaymentSuccess(txHash);
+      await refreshBookings();
     } catch (error) {
       console.log("🚀 error:", error);
       //     let errorMessage = "Payment failed. Please try again.";
@@ -93,11 +77,16 @@ export const BookingSlot = ({ date, bookings, time }: BookingSlotProps) => {
     return bookings.find(booking => booking.memo === createMemoId(date, time, spotId));
   };
 
+  const getSenderEnsOrAddress = (id: number) => {
+    const booking = getBookingForSpot(id);
+    return booking?.senderEnsPrimaryName || booking?.senderAddress;
+  };
+
   return (
     <Dialog.Root>
       <Dialog.Trigger>
         <Card className='flex-1'>
-          <Flex direction='column' align='center' gap='2' minWidth='100px'>
+          <Flex direction='column' align='center' gap='2' minWidth='100px' justify='center'>
             <Flex align='center' gap='2'>
               <TimerIcon />
               <Text as='p' weight='bold'>
@@ -142,7 +131,7 @@ export const BookingSlot = ({ date, bookings, time }: BookingSlotProps) => {
               <Flex justify='between'>
                 <Text># {idx + 1}</Text>
                 {getBookingForSpot(idx + 1) ? (
-                  <Text>{getBookingForSpot(idx + 1)?.senderEnsPrimaryName}</Text>
+                  <Text>{getSenderEnsOrAddress(idx + 1)}</Text>
                 ) : (
                   <Button onClick={() => handleSubmitBooking(idx + 1)}>Book</Button>
                 )}
