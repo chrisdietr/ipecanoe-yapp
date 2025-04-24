@@ -14,15 +14,17 @@ type BookingSlotProps = {
 };
 
 export const BookingSlot = ({ date, bookings, time }: BookingSlotProps) => {
-  console.log("🚀 bookings:", bookings);
+  // console.log("🚀 bookings:", bookings);
   const { refreshBookings } = useBookings();
 
-  const handlePaymentSuccess = (txHash: string) => {
+  const handlePaymentSuccess = async (txHash: string) => {
     console.log("Payment successful:", txHash);
     // Should, close dialog, show success (maybe toast), trigger refech of bookings in BookingGrid/BookingsProvider
     // Scratch the above, it should trigger refectch of bookings and make sure the new booking is visible here.
     // Refresh bookings data to show the new booking
-    refreshBookings();
+    console.log("🚀 bookings before:", bookings);
+    await refreshBookings();
+    console.log("🚀 bookings after:", bookings);
   };
 
   const handleSubmitBooking = async (spotId: number) => {
@@ -62,7 +64,7 @@ export const BookingSlot = ({ date, bookings, time }: BookingSlotProps) => {
       console.log("🚀 txHash:", txHash);
       console.log("🚀 chainId:", chainId);
       // If we're here, payment was successful
-      handlePaymentSuccess(txHash);
+      await handlePaymentSuccess(txHash);
     } catch (error) {
       console.log("🚀 error:", error);
       //     let errorMessage = "Payment failed. Please try again.";
