@@ -35,41 +35,15 @@ export const BookingSlot = ({ date, bookings, time }: BookingSlotProps) => {
         const redirectUrl = APP_URL; // TODO: add param/path for success message?
         console.log("Setting redirect URL:", redirectUrl);
         paymentConfig.redirectUrl = redirectUrl;
-
-        // Log the expected redirect URL for debugging
-        const expectedUrl = new URL(redirectUrl);
-        expectedUrl.searchParams.set("memo", memoId);
-        expectedUrl.searchParams.set("amount", DEFAULT_PAYMENT_AMOUNT.toString());
-        expectedUrl.searchParams.set("currency", DEFAULT_PAYMENT_CURRENCY);
-        console.log("Expected redirect URL:", expectedUrl.toString());
       }
 
       // Request payment
-      const { chainId, txHash } = await sdk.requestPayment(paymentConfig);
+      await sdk.requestPayment(paymentConfig);
 
       // If we're here, payment was successful
       await refreshBookings();
     } catch (error) {
       console.log("🚀 error:", error);
-      //     let errorMessage = "Payment failed. Please try again.";
-      //     if ((error as Error).message === 'Payment was cancelled') {
-      //       errorMessage = "Payment was cancelled by user";
-      //     } else if ((error as Error).message === 'Payment request timed out') {
-      //       errorMessage = "Payment request timed out";
-      //     } else if ((error as Error).message.includes('ENS name not found')) {
-      //       errorMessage = "Payment recipient not found";
-      //     } else if ((error as Error).message.includes('Redirect URL is required')) {
-      //       errorMessage = "Redirect URL is required when not in iframe mode";
-      //     } else {
-      //       console.error("Payment error:", error);
-      //     }
-      //     toast({
-      //       title: "Payment Error",
-      //       description: errorMessage,
-      //       variant: "destructive",
-      //     });
-      //     setProcessing(false);
-      //   }
     }
   };
 
@@ -108,7 +82,6 @@ export const BookingSlot = ({ date, bookings, time }: BookingSlotProps) => {
             <Flex align='center' justify='center' gap='2'>
               <CalendarIcon />
               {(() => {
-                // Parse the date string from "YYYY-DD-MM" format
                 const parsedDate = parse(date, "yyyy-dd-MM", new Date());
                 return format(parsedDate, "MMMM d");
               })()}{" "}

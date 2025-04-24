@@ -12,11 +12,8 @@ const dates = getTuesdaysAndThursdaysFromNow(new Date(2025, 4, 31));
 
 export const BookingGrid = () => {
   const { bookings, isLoading, error } = useBookings();
-  // console.log("🚀 bookings:", bookings);
 
   const getBookingsForSlot = (date: string, time: string) => {
-    // console.log("🚀 date:", date + time);
-    // return bookings?.filter(booking => booking.memo.includes(`ipe-canoe-${date}-${time}`)) || [];
     return bookings?.filter(booking => booking.memo.includes(createMemoId(date, time))) || [];
   };
 
@@ -30,6 +27,7 @@ export const BookingGrid = () => {
   };
 
   return (
+    // TODO: add loading state
     <Grid columns={{ xs: "1", sm: "2", md: "3" }} gap='4'>
       {dates.map((date, idx) => (
         <Card
