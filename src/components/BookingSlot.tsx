@@ -1,6 +1,7 @@
 import { APP_URL, DEFAULT_PAYMENT_AMOUNT, DEFAULT_PAYMENT_CURRENCY, RECEIVER_ADDRESS, SPOTS_PER_SLOT } from "@/constants";
 import { sdk } from "@/lib/sdk";
 import { createMemoId } from "@/lib/utils";
+import { useBookings } from "@/providers/BookingsProvider";
 import { CalendarIcon, Cross2Icon, PersonIcon, TimerIcon } from "@radix-ui/react-icons";
 import { Text, Card, Flex, Button, Dialog } from "@radix-ui/themes";
 import { isInIframe, PaymentRequestData, PaymentSimple } from "@yodlpay/yapp-sdk";
@@ -14,8 +15,17 @@ type BookingSlotProps = {
 
 export const BookingSlot = ({ date, bookings, time }: BookingSlotProps) => {
   console.log("🚀 bookings:", bookings);
+  const { refreshBookings } = useBookings();
 
-  const handleBooking = async (spotId: number) => {
+  const handlePaymentSuccess = (txHash: string) => {
+    console.log("Payment successful:", txHash);
+    // Should, close dialog, show success (maybe toast), trigger refech of bookings in BookingGrid/BookingsProvider
+    // Scratch the above, it should trigger refectch of bookings and make sure the new booking is visible here.
+    // Refresh bookings data to show the new booking
+    refreshBookings();
+  };
+
+  const handleSubmitBooking = async (spotId: number) => {
     console.log("Booking...");
 
     try {
@@ -52,7 +62,7 @@ export const BookingSlot = ({ date, bookings, time }: BookingSlotProps) => {
       console.log("🚀 txHash:", txHash);
       console.log("🚀 chainId:", chainId);
       // If we're here, payment was successful
-      // onPaymentComplete();
+      handlePaymentSuccess(txHash);
     } catch (error) {
       console.log("🚀 error:", error);
       //     let errorMessage = "Payment failed. Please try again.";
@@ -128,11 +138,11 @@ export const BookingSlot = ({ date, bookings, time }: BookingSlotProps) => {
           {Array.from({ length: 10 }).map((_, idx) => (
             <Card key={idx} className={getBookingForSpot(idx + 1) ? "bg-[var(--gray-4)]" : ""}>
               <Flex justify='between'>
-                <Text># {idx + bookings.length}</Text>
+                <Text># {idx + 1}</Text>
                 {getBookingForSpot(idx + 1) ? (
-                  <Text>{getBookingForSpot(idx + 1)?.receiverEnsPrimaryName}</Text>
+                  <Text>{getBookingForSpot(idx + 1)?.senderEnsPrimaryName}</Text>
                 ) : (
-                  <Button onClick={() => handleBooking(idx + 1)}>Book</Button>
+                  <Button onClick={() => handleSubmitBooking(idx + 1)}>Book</Button>
                 )}
               </Flex>
             </Card>
