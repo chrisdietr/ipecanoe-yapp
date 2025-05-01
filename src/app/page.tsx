@@ -8,7 +8,7 @@ export default function Home() {
     <Flex direction='column' gap='4'>
       <Flex direction='column' gap='2'>
         <Heading size='6' className='text-center sm:text-left' color='gray'>
-          Book Your Canoe Adventure
+          Book Your Koru Va´a Canoe Adventure
         </Heading>
         <Heading size='3' className='text-center sm:text-left' color='indigo'>
           Select a date and time to rent
