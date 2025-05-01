@@ -1,4 +1,4 @@
-export const YAPP_ENS = "canoe-shop.ipecity.eth";
+export const YAPP_ENS = "koruvaa.ipecity.eth";
 export const RECEIVER_ADDRESS = "0xB2c31e855C8D092E2A2f877DFB154Abb4793F9F6";
 export const RECEIVER_ENS = "koruvaa.ipecity.eth";
 export const DEFAULT_PAYMENT_CURRENCY = "BRL";
