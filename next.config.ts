@@ -1,11 +1,8 @@
-
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  experimental: {
-    serverActions: true,
-  }
+  experimental: {},
 };
 
 export default nextConfig;
